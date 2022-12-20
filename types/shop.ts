@@ -8,4 +8,5 @@ export interface Shop {
     shop_rating?: number;
     shop_like?: number;
     shop_created_date: string;
+    shop_uuid: string;
 }
