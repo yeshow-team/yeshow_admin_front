@@ -93,7 +93,7 @@ const MenuItem = ({ ...props }) => {
                 onChange={(base64: ChangeEvent<HTMLInputElement>) => {
                     if (!base64.target.files) return;
                     const file = base64.target.files[0];
-                    props.setFileName(file.name);
+
                     const reader = new FileReader();
                     reader.onload = (base64img) => {
                         const image = new Image();

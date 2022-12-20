@@ -11,6 +11,49 @@ import { Shop } from "../types/shop";
 const Home = () => {
     const router = useRouter();
 
+    const reviews = [
+        {
+            shop_review_title: "인생맛집.. 찾았다!!",
+            shop_review_detail: "너무 맛있어서 다음에 또 올게요 !",
+            shop_review_rating: 4,
+
+            shop_review_created_date: "2021-08-31T09:00:00.000Z",
+            shop_review_updated_date: "2021-08-31T09:00:00.000Z",
+            shop_review_deleted_at: "2021-08-31T09:00:00.000Z",
+            user_id: "B1ueRabbit",
+        },
+        {
+            shop_review_title: "인생맛집.. 찾았다!!",
+            shop_review_detail: "너무 맛있어서 다음에 또 올게요 !",
+            shop_review_rating: 4,
+
+            shop_review_created_date: "2021-08-31T09:00:00.000Z",
+            shop_review_updated_date: "2021-08-31T09:00:00.000Z",
+            shop_review_deleted_at: "2021-08-31T09:00:00.000Z",
+            user_id: "B1ueRabbit",
+        },
+        {
+            shop_review_title: "인생맛집.. 찾았다!!",
+            shop_review_detail: "너무 맛있어서 다음에 또 올게요 !",
+            shop_review_rating: 4,
+
+            shop_review_created_date: "2021-08-31T09:00:00.000Z",
+            shop_review_updated_date: "2021-08-31T09:00:00.000Z",
+            shop_review_deleted_at: "2021-08-31T09:00:00.000Z",
+            user_id: "B1ueRabbit",
+        },
+        {
+            shop_review_title: "인생맛집.. 찾았다!!",
+            shop_review_detail: "너무 맛있어서 다음에 또 올게요 !",
+            shop_review_rating: 4,
+
+            shop_review_created_date: "2021-08-31T09:00:00.000Z",
+            shop_review_updated_date: "2021-08-31T09:00:00.000Z",
+            shop_review_deleted_at: "2021-08-31T09:00:00.000Z",
+            user_id: "B1ueRabbit",
+        },
+    ];
+
     useEffect(() => {
         document.title = "메인 - Yeshow Admin";
         if (localStorage.getItem("access") == null) {
@@ -220,7 +263,18 @@ const Home = () => {
                             운영중인 가게의 최근 리뷰를 보여줍니다.
                         </SectionDescription>
                         <Spacer size={"40px"} />
-                        <ReviewCard></ReviewCard>
+                        <ReviewCard>
+                            {reviews.map((review: any, index: number) => (
+                                <ReviewComponent
+                                    key={index}
+                                    title={review.shop_review_title}
+                                    content={review.shop_review_detail}
+                                    user={review.user_id}
+                                    rating={review.shop_review_rating}
+                                    date={review.shop_review_updated_date}
+                                />
+                            ))}
+                        </ReviewCard>
                     </Section>
                 </SpaceBetween>
                 <Spacer size="65px" />
@@ -235,6 +289,161 @@ const Home = () => {
         </PageContainer>
     );
 };
+const timeForToday = (value) => {
+    const today = new Date();
+    const timeValue = new Date(value);
+
+    const betweenTime = Math.floor(
+        (today.getTime() - timeValue.getTime()) / 1000 / 60
+    );
+    if (betweenTime < 1) return "방금 전";
+    if (betweenTime < 60) {
+        return `${betweenTime}분 전`;
+    }
+
+    const betweenTimeHour = Math.floor(betweenTime / 60);
+    if (betweenTimeHour < 24) {
+        return `${betweenTimeHour}시간 전`;
+    }
+
+    const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+    if (betweenTimeDay < 365) {
+        return `${betweenTimeDay}일 전`;
+    }
+
+    return `${Math.floor(betweenTimeDay / 365)}년 전`;
+};
+
+const ReviewComponent = ({ title, content, user, rating, date }: any) => {
+    return (
+        <ReviewContainer>
+            <SpaceBetween>
+                <UserContainer>
+                    <UserImage src={"https://picsum.photos/200"} />
+                    <Username>
+                        {user.substr(0, 3) + "*".repeat(user.length - 3)}님의
+                        리뷰
+                    </Username>
+                </UserContainer>
+                <ReviewDate>{timeForToday(date)}</ReviewDate>
+            </SpaceBetween>
+            <Spacer size={"10px"} />
+            <RatingContainer>
+                {Array.from({ length: rating }, (v, i) => (
+                    <StarFill key={i} className="material-symbols-rounded">
+                        grade
+                    </StarFill>
+                ))}
+                {Array.from({ length: 5 - rating }, (v, i) => (
+                    <Star key={i} className="material-symbols-rounded">
+                        grade
+                    </Star>
+                ))}
+                <RatingText>{rating}.0/5.0점</RatingText>
+            </RatingContainer>
+            <Spacer size={"23px"} />
+            <ReviewTitle>{title}</ReviewTitle>
+            <Spacer size={"11px"} />
+            <ReviewContent>{content}</ReviewContent>
+        </ReviewContainer>
+    );
+};
+
+const StarFill = styled.div`
+    font-size: 23px;
+    color: #5992ff;
+    width: 24px;
+    height: 24px;
+    margin-right: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-variation-settings: "FILL" 1;
+`;
+
+const RatingContainer = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const Star = styled.div`
+    font-size: 23px;
+    color: #e9e9eb;
+    width: 24px;
+    height: 24px;
+    margin-right: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-variation-settings: "FILL" 1;
+`;
+
+const ReviewTitle = styled.div`
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 26px;
+
+    color: #46484e;
+`;
+
+const ReviewContent = styled.div`
+    font-size: 19px;
+    line-height: 28px;
+    /* or 147% */
+
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.41px;
+
+    color: #898c94;
+`;
+
+const RatingText = styled.div`
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 28px;
+    margin-left: 15px;
+    color: #5992ff;
+`;
+
+const UserImage = styled.img`
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+`;
+
+const ReviewDate = styled.div`
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 25px;
+    /* identical to box height, or 147% */
+
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.41px;
+
+    color: #7c808b;
+`;
+
+const Username = styled.div`
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 25px;
+    color: #363940;
+`;
+
+const UserContainer = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 13px;
+`;
+
+const ReviewContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+`;
 
 const SkeletonCard = styled.div`
     display: flex;
@@ -394,12 +603,17 @@ const RestaurantCard = styled.div`
 `;
 
 const ReviewCard = styled.div`
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 407px;
     background: #ffffff;
     border: 1px solid #e6e6e6;
     box-shadow: 0px 0px 4px #edf0f5;
     border-radius: 5px;
+    padding: 26px;
+    overflow-y: scroll;
+    gap: 40px;
 `;
 
 const ReservationCard = styled.div`
