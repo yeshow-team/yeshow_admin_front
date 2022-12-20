@@ -56,6 +56,7 @@ const Login = () => {
                                     "access",
                                     res.data.accessToken
                                 );
+                                alert("로그인 되었습니다.");
                                 router.replace("/");
                             });
                     } else {
