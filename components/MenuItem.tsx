@@ -2,11 +2,34 @@ import styled from "@emotion/styled";
 import { ChangeEvent } from "react";
 
 const MenuItem = ({ ...props }) => {
+    const resize_image = (image: any) => {
+        let canvas = document.createElement("canvas"),
+            max_size = 1280,
+            width = image.width,
+            height = image.height;
+
+        if (width > height) {
+            if (width > max_size) {
+                height *= max_size / width;
+                width = max_size;
+            }
+        } else {
+            if (height > max_size) {
+                width *= max_size / height;
+                height = max_size;
+            }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        canvas?.getContext("2d")?.drawImage(image, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg");
+        return dataUrl;
+    };
     const setFile = (file: any) => {
         props.setMenus(
             props.menus.map((menu: any, index: number) => {
                 if (index === props.id) {
-                    menu.shop_menu_image = URL.createObjectURL(file);
+                    menu.shop_menu_image = file;
                     menu.shop_menu_image_file = file;
                 }
                 return menu;
@@ -67,9 +90,29 @@ const MenuItem = ({ ...props }) => {
                 type="file"
                 id={props.id}
                 accept="image/jpg, image/png, image/jpeg"
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    if (!e.target.files) return;
-                    setFile(e.target.files[0]);
+                onChange={(base64: ChangeEvent<HTMLInputElement>) => {
+                    if (!base64.target.files) return;
+                    const file = base64.target.files[0];
+                    props.setFileName(file.name);
+                    const reader = new FileReader();
+                    reader.onload = (base64img) => {
+                        const image = new Image();
+                        if (base64img.target) {
+                            if (base64img.target.result) {
+                                if (
+                                    typeof base64img.target?.result === "string"
+                                )
+                                    image.src = base64img.target.result;
+                            }
+                        }
+                        image.onload = (e) => {
+                            if (e.target) {
+                                const dataUrl = resize_image(e.target);
+                                props.setFile(dataUrl);
+                            }
+                        };
+                    };
+                    reader.readAsDataURL(file);
                 }}
             />
             <InfoContainer>
