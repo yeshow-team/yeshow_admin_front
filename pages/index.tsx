@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import Header from "../components/Header";
+import { Shop } from "../types/shop";
 
 const Home = () => {
     const router = useRouter();
@@ -38,7 +40,7 @@ const Home = () => {
         }
     }, [myShop]);
 
-    const format = (date) => {
+    const format = (date: string) => {
         return `${date.split("-")[0]}년 ${date.split("-")[1]}월 ${
             date.split("-")[2].split("T")[0]
         }일`;
@@ -46,6 +48,7 @@ const Home = () => {
 
     return (
         <PageContainer>
+            <Header />
             <Container>
                 <SpaceBetween>
                     <Section size={"690px"}>
@@ -101,7 +104,7 @@ const Home = () => {
                             </SkeletonCard>
                         ) : (
                             <ShopList>
-                                {myShop.map((shop, index) => (
+                                {myShop.map((shop: Shop, index: number) => (
                                     <RestaurantCard key={index}>
                                         <RestaurantContent>
                                             <RestaurantInfoContainer>
@@ -383,7 +386,7 @@ const ReservationCard = styled.div`
 
 export default Home;
 
-const Section = styled.div`
+const Section = styled.div<{ size: string }>`
     width: ${(props) => props.size};
     flex-direction: column;
 `;

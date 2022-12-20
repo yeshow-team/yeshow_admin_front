@@ -359,10 +359,11 @@ const AddShop = () => {
                                     setMenus([
                                         ...menus,
                                         {
-                                            name: "메뉴 이름",
-                                            description: "메뉴 설명",
-                                            price: 10000,
-                                            file: null,
+                                            shop_menu_name: "메뉴 이름",
+                                            shop_menu_description: "메뉴 설명",
+                                            shop_menu_price: 10000,
+                                            shop_menu_image_file: null,
+                                            shop_menu_image: null,
                                         },
                                     ])
                                 }

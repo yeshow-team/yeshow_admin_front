@@ -12,10 +12,10 @@ const Login = () => {
 
     const router = useRouter();
 
-    const login = (e) => {
+    const login = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         if (id === "" || password === "") {
-            setError("아이디와 비밀번호를 입력해주세요.");
+            setErrorMessage("아이디와 비밀번호를 입력해주세요.");
         } else {
             axios
                 .post(
@@ -52,12 +52,14 @@ const Login = () => {
                                 router.replace("/");
                             });
                     } else {
-                        setError("아이디와 비밀번호를 확인해주세요.");
+                        setError(true);
+                        setErrorMessage("아이디와 비밀번호를 확인해주세요.");
                     }
                 })
                 .catch((error) => {
                     console.log(error);
-                    setError("아이디와 비밀번호를 확인해주세요.");
+                    setError(true);
+                    setErrorMessage("아이디와 비밀번호를 확인해주세요.");
                 });
         }
     };
