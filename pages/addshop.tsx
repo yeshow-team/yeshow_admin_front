@@ -5,6 +5,8 @@ import InputText from "../components/InputText";
 import InputFile from "../components/InputFile";
 import { keyframes } from "@emotion/react";
 import MenuItem from "../components/MenuItem";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 const AddShop = () => {
     const [step, setStep] = React.useState(1);
@@ -24,7 +26,9 @@ const AddShop = () => {
     const [shopPhoneError, setShopPhoneError] = React.useState(false);
     const [shopPhoneErrorMessage, setShopPhoneErrorMessage] =
         React.useState("");
+    const [shopImage, setShopImage] = React.useState(null);
     const [shopImageFileError, setShopImageFileError] = React.useState(false);
+    const [shopImageName, setShopImageName] = React.useState("");
     const [businessHours, setBusinessHours] = React.useState("");
     const [businessHoursError, setBusinessHoursError] = React.useState(false);
     const [businessHoursErrorMessage, setBusinessHoursErrorMessage] =
@@ -57,6 +61,7 @@ const AddShop = () => {
         businessRegistrationCertificateImageName,
         setBusinessRegistrationCertificateImageName,
     ] = React.useState(null);
+
     const handleModalClose = () => {
         setModalVisible(false);
         setModalMessage("");
@@ -69,12 +74,25 @@ const AddShop = () => {
         setModalMessage(message);
     };
 
+    useEffect(() => {
+        document.title = "가게 추가 - Yeshow Admin";
+        if (localStorage.getItem("access") == null) {
+            router.replace("/login");
+        }
+        axios.defaults.headers.common[
+            "Authorization"
+        ] = `Bearer ${localStorage.getItem("access")}`;
+    }, []);
+
+    const router = useRouter();
+
     const [menus, setMenus] = React.useState([
         {
             shop_menu_name: "메뉴 이름",
             shop_menu_description: "메뉴 설명",
             shop_menu_price: 10000,
             shop_menu_image: null,
+            shop_menu_image_file: null,
         },
     ]);
 
@@ -84,7 +102,10 @@ const AddShop = () => {
                 shopNameError ||
                 shopCategoryError ||
                 shopName === "" ||
-                shopCategory === ""
+                shopCategory === "" ||
+                shopImage === null ||
+                businessRegistrationImage === null ||
+                businessRegistrationCertificateImage === null
             ) {
                 makeModal("오류", "필수 항목을 입력해주세요.");
             } else {
@@ -92,14 +113,59 @@ const AddShop = () => {
             }
         }
         if (step === 2) {
-            if (shopAddressError || shopPhoneError || shopImageFileError) {
+            if (
+                shopAddressError ||
+                shopPhoneError ||
+                shopDescriptionError ||
+                shopAddress === "" ||
+                shopPhone === "" ||
+                shopDescription === "" ||
+                closedDaysError ||
+                businessHoursError ||
+                closedDays === "" ||
+                businessHours === ""
+            ) {
                 makeModal("오류", "필수 항목을 입력해주세요.");
             } else {
                 setStep(3);
             }
         }
         if (step === 3) {
-            alert("가게 추가 완료!");
+            axios
+                .post(
+                    `${process.env.NEXT_PUBLIC_API_URL}/shop`,
+                    {
+                        shop: {
+                            shop_name: shopName,
+                            shop_category: shopCategory,
+                            shop_image: shopImage,
+                            business_registration_image:
+                                businessRegistrationImage,
+                            business_registration_certificate_image:
+                                businessRegistrationCertificateImage,
+                        },
+
+                        shop_detail: {
+                            shop_address: shopAddress,
+                            shop_tell: shopPhone,
+                            shop_business_hours: businessHours,
+                            shop_closed_days: closedDays,
+                            shop_description: shopDescription,
+                        },
+                        menus: menus,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem(
+                                "access"
+                            )}`,
+                        },
+                    }
+                )
+                .then((res) => {
+                    makeModal("성공", "가게 등록이 완료되었습니다.");
+                    router.push("/");
+                });
         }
     };
 
@@ -127,6 +193,12 @@ const AddShop = () => {
                 </ModalBackground>
             )}
             <Container>
+                <BackButton onClick={() => router.push("/")}>
+                    <IcoButton className="material-symbols-rounded">
+                        arrow_back_ios
+                    </IcoButton>
+                    돌아가기
+                </BackButton>
                 <StepTitle>가게 추가 ({step}/3)</StepTitle>
                 <Spacer size={"20px"} />
                 <StepDescription>{stepMessage[step - 1]}</StepDescription>
@@ -173,7 +245,7 @@ const AddShop = () => {
                             placeholder={"사업자등록증 스캔 업로드(PDF,사진)"}
                             required
                             value={businessRegistrationImage}
-                            setValue={setBusinessRegistrationImage}
+                            setFile={setBusinessRegistrationImage}
                             fileName={businessRegistrationImageName}
                             setFileName={setBusinessRegistrationImageName}
                             id={"businessRegistrationImage"}
@@ -184,12 +256,23 @@ const AddShop = () => {
                             placeholder={"영업신고증 스캔 업로드(PDF,사진)"}
                             required
                             value={businessRegistrationCertificateImage}
-                            setValue={setBusinessRegistrationCertificateImage}
+                            setFile={setBusinessRegistrationCertificateImage}
                             fileName={businessRegistrationCertificateImageName}
                             setFileName={
                                 setBusinessRegistrationCertificateImageName
                             }
                             id={"businessRegistrationCertificateImage"}
+                        />
+                        <Spacer size={"40px"} />
+                        <InputFile
+                            label={"가게 이미지"}
+                            placeholder={"가게 이미지"}
+                            required
+                            value={shopImage}
+                            setFile={setShopImage}
+                            fileName={shopImageName}
+                            setFileName={setShopImageName}
+                            id={"shopImage"}
                         />
                     </Form>
                 ) : step === 2 ? (
@@ -207,7 +290,7 @@ const AddShop = () => {
                         />
                         <Spacer size={"40px"} />
                         <InputText
-                            placeholder={"가게 전화번호"}
+                            placeholder={"ex) 02-1234-5678"}
                             label={"가게 전화번호"}
                             required
                             value={shopPhone}
@@ -220,7 +303,7 @@ const AddShop = () => {
                         />
                         <Spacer size={"40px"} />
                         <InputText
-                            placeholder={"가게 영업시간"}
+                            placeholder={"오전 7시 ~ 오후 10시"}
                             label={"가게 영업시간"}
                             required
                             value={businessHours}
@@ -232,7 +315,7 @@ const AddShop = () => {
                         />
                         <Spacer size={"40px"} />
                         <InputText
-                            placeholder={"가게 휴무일"}
+                            placeholder={"매주 월요일,화요일"}
                             label={"가게 휴무일"}
                             required
                             value={closedDays}
@@ -334,11 +417,35 @@ const fadeIn = keyframes`
     }
 `;
 
+const IcoButton = styled.div`
+    font-size: 15px;
+`;
+
+const BackButton = styled.div`
+    margin-bottom: 23px;
+    width: 100px;
+    background: white;
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 27px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    color: #5a5963;
+    &:hover {
+        background: #f4f4f4;
+    }
+`;
 const MenuItemList = styled.div`
     display: flex;
     flex-direction: column;
     height: 510px;
     overflow-y: scroll;
+    gap: 20px;
 `;
 
 const ModalBackground = styled.div`
@@ -516,31 +623,5 @@ const StepDescription = styled.div`
 const Spacer = (props: any) => {
     return <div style={{ height: `${props.size}` }} />;
 };
-
-const Input = styled.input`
-    width: 100%;
-    height: 54px;
-    font-size: 17px;
-    background: #ffffff;
-    border: 1px solid #e6e6e6;
-    border-radius: 8px;
-    padding-left: 17px;
-    &:focus {
-        outline: none;
-        border: 2px solid #5987ff;
-        transition: all 0.2s ease-in-out;
-    }
-    &::placeholder {
-        color: #bdbdc2;
-    }
-`;
-
-const InputLabel = styled.div`
-    font-weight: 500;
-    font-size: 19px;
-    line-height: 21px;
-    color: var(--textPrimary);
-    margin-left: 4px;
-`;
 
 export default AddShop;

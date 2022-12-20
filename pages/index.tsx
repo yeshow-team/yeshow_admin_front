@@ -2,9 +2,48 @@ import Head from "next/head";
 import Image from "next/image";
 import styled from "@emotion/styled";
 import { useRouter } from "next/router";
+import axios from "axios";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 const Home = () => {
     const router = useRouter();
+
+    useEffect(() => {
+        document.title = "메인 - Yeshow Admin";
+        if (localStorage.getItem("access") == null) {
+            router.replace("/login");
+        }
+        axios.defaults.headers.common[
+            "Authorization"
+        ] = `Bearer ${localStorage.getItem("access")}`;
+    }, []);
+
+    const fetchMyShop = async () => {
+        const { data } = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/shop/myshop`
+        );
+        return data;
+    };
+
+    const {
+        data: myShop,
+        error: myShopError,
+        isLoading: isFetchingMyShop,
+    } = useQuery(["myshop"], fetchMyShop);
+
+    useEffect(() => {
+        if (myShop) {
+            console.log(myShop);
+        }
+    }, [myShop]);
+
+    const format = (date) => {
+        return `${date.split("-")[0]}년 ${date.split("-")[1]}월 ${
+            date.split("-")[2].split("T")[0]
+        }일`;
+    };
+
     return (
         <PageContainer>
             <Container>
@@ -16,54 +55,126 @@ const Home = () => {
                             현재 yeshow에서 운영중인 가게 목록을 보여줍니다.
                         </SectionDescription>
                         <Spacer size={"40px"} />
-                        <RestaurantCard>
-                            <RestaurantContent>
-                                <RestaurantInfoContainer>
-                                    <Label>
-                                        <LabelTitle>카테고리</LabelTitle>
-                                        <Spacer size={"9px"} />
-                                        <LabelText>한식</LabelText>
-                                    </Label>
-                                    <Spacer size={"22px"} />
-                                    <LabelGroup>
-                                        <Label>
-                                            <LabelTitle>상호명</LabelTitle>
+                        {isFetchingMyShop ? (
+                            <SkeletonCard>
+                                <RestaurantContent>
+                                    <SkeletonInfoContainer>
+                                        <SkeletonLabel>
+                                            <SkeletonBox size="65px;" />
                                             <Spacer size={"9px"} />
+                                            <SkeletonBox size="65px;" />
+                                        </SkeletonLabel>
+                                        <Spacer size={"22px"} />
+                                        <LabelGroup>
+                                            <Label>
+                                                <SkeletonBox size="65px;" />
+                                                <Spacer size={"9px"} />
 
-                                            <LabelText>
-                                                이자와 숙대입구점
-                                            </LabelText>
-                                        </Label>
-                                        <RowSpacer size={"34px"} />
-                                        <Label>
-                                            <LabelTitle>가게등록일</LabelTitle>
-                                            <Spacer size={"9px"} />
+                                                <SkeletonBox size="133px;" />
+                                            </Label>
+                                            <RowSpacer size={"34px"} />
+                                            <Label>
+                                                <SkeletonBox size="80px;" />
+                                                <Spacer size={"9px"} />
 
-                                            <LabelText>
-                                                2022년 12월 01일
-                                            </LabelText>
-                                        </Label>
-                                    </LabelGroup>
-                                    <Spacer size={"22px"} />
-                                    <LabelGroup>
-                                        <Label>
-                                            <LabelTitle>사업자정보</LabelTitle>
-                                            <Spacer size={"9px"} />
-                                            <TextButton>사업자정보</TextButton>
-                                        </Label>
-                                        <RowSpacer size={"34px"} />
-                                        <Label>
-                                            <LabelTitle>상태</LabelTitle>
-                                            <Spacer size={"9px"} />
-                                            <TextButton>정상영업중</TextButton>
-                                        </Label>
-                                    </LabelGroup>
-                                </RestaurantInfoContainer>
-                                <Grade>4.8/5.0점 (리뷰 32개)</Grade>
-                            </RestaurantContent>
-                            <RestaurantImage src="https://t1.daumcdn.net/cfile/tistory/9974103359D8C5481B" />
-                        </RestaurantCard>
-                        <Spacer size={"22px"} />
+                                                <SkeletonBox size="140px;" />
+                                            </Label>
+                                        </LabelGroup>
+                                        <Spacer size={"22px"} />
+                                        <LabelGroup>
+                                            <Label>
+                                                <SkeletonBox size="80px;" />
+                                                <Spacer size={"9px"} />
+                                                <SkeletonBox size="80px;" />
+                                            </Label>
+                                            <RowSpacer size={"34px"} />
+                                            <Label>
+                                                <SkeletonBox size="33px;" />
+                                                <Spacer size={"9px"} />
+                                                <SkeletonBox size="81px;" />
+                                            </Label>
+                                        </LabelGroup>
+                                    </SkeletonInfoContainer>
+                                    <SkeletonBox size="175px;" />
+                                </RestaurantContent>
+                                <SkeletonImage />
+                            </SkeletonCard>
+                        ) : (
+                            <ShopList>
+                                {myShop.map((shop, index) => (
+                                    <RestaurantCard key={index}>
+                                        <RestaurantContent>
+                                            <RestaurantInfoContainer>
+                                                <Label>
+                                                    <LabelTitle>
+                                                        카테고리
+                                                    </LabelTitle>
+                                                    <Spacer size={"9px"} />
+                                                    <LabelText>
+                                                        {shop.shop_category}
+                                                    </LabelText>
+                                                </Label>
+                                                <Spacer size={"22px"} />
+                                                <LabelGroup>
+                                                    <Label>
+                                                        <LabelTitle>
+                                                            상호명
+                                                        </LabelTitle>
+                                                        <Spacer size={"9px"} />
+
+                                                        <LabelText>
+                                                            {shop.shop_name}
+                                                        </LabelText>
+                                                    </Label>
+                                                    <RowSpacer size={"34px"} />
+                                                    <Label>
+                                                        <LabelTitle>
+                                                            가게등록일
+                                                        </LabelTitle>
+                                                        <Spacer size={"9px"} />
+
+                                                        <LabelText>
+                                                            {format(
+                                                                shop.shop_created_date
+                                                            )}
+                                                        </LabelText>
+                                                    </Label>
+                                                </LabelGroup>
+                                                <Spacer size={"22px"} />
+                                                <LabelGroup>
+                                                    <Label>
+                                                        <LabelTitle>
+                                                            사업자정보
+                                                        </LabelTitle>
+                                                        <Spacer size={"9px"} />
+                                                        <TextButton>
+                                                            사업자정보
+                                                        </TextButton>
+                                                    </Label>
+                                                    <RowSpacer size={"34px"} />
+                                                    <Label>
+                                                        <LabelTitle>
+                                                            상태
+                                                        </LabelTitle>
+                                                        <Spacer size={"9px"} />
+                                                        <TextButton>
+                                                            정상영업중
+                                                        </TextButton>
+                                                    </Label>
+                                                </LabelGroup>
+                                            </RestaurantInfoContainer>
+                                            <Grade>
+                                                {shop.shop_rating}/5.0점 (리뷰
+                                                32개)
+                                            </Grade>
+                                        </RestaurantContent>
+                                        <RestaurantImage
+                                            src={shop.shop_image}
+                                        />
+                                    </RestaurantCard>
+                                ))}
+                            </ShopList>
+                        )}
                         <AddButton
                             onClick={() => {
                                 router.push("/addshop");
@@ -94,6 +205,45 @@ const Home = () => {
         </PageContainer>
     );
 };
+
+const SkeletonCard = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 311px;
+    background: #ffffff;
+    border: 1px solid #e6e6e6;
+    box-shadow: 0px 0px 4px #edf0f5;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 30px;
+        height: 100%;
+        background: linear-gradient(to right, #f2f2f2, #ddd, #f2f2f2);
+        animation: loading 2s infinite linear;
+    }
+`;
+
+const SkeletonBox = styled.div<{ size: string }>`
+    height: 22px;
+    width: ${(props) => props.size};
+    border-radius: 5px;
+    background: #e8e9ec;
+`;
+
+const ShopList = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 311px;
+    overflow-y: scroll;
+    margin-bottom: 20px;
+    gap: 20px;
+`;
 
 const LabelGroup = styled.div`
     display: flex;
@@ -144,6 +294,11 @@ const Grade = styled.div`
     color: #3dab55;
 `;
 
+const SkeletonLabel = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
 const Label = styled.div`
     display: flex;
     flex-direction: column;
@@ -166,9 +321,22 @@ const RestaurantInfoContainer = styled.div`
     flex-direction: column;
 `;
 
+const SkeletonInfoContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
 const RestaurantImage = styled.img`
     width: 311px;
     height: 311px;
+    object-fit: cover;
+    border-radius: 0 5px 5px 0;
+`;
+
+const SkeletonImage = styled.div`
+    width: 311px;
+    height: 311px;
+    background: #e8e9ec;
     object-fit: cover;
     border-radius: 0 5px 5px 0;
 `;

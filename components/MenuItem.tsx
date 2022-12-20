@@ -7,6 +7,7 @@ const MenuItem = ({ ...props }) => {
             props.menus.map((menu: any, index: number) => {
                 if (index === props.id) {
                     menu.shop_menu_image = URL.createObjectURL(file);
+                    menu.shop_menu_image_file = file;
                 }
                 return menu;
             })
@@ -40,6 +41,17 @@ const MenuItem = ({ ...props }) => {
         });
         props.setMenus(temp);
     };
+
+    const handleRemove = () => {
+        if (props.menus.length === 1) {
+            alert("메뉴는 최소 1개 이상이어야 합니다.");
+            return;
+        }
+        props.setMenus(
+            props.menus.filter((menu: any, index: number) => index !== props.id)
+        );
+    };
+
     return (
         <Container>
             <label htmlFor={props.id}>
@@ -81,9 +93,28 @@ const MenuItem = ({ ...props }) => {
                     onChange={(e) => setPrice(Number(e.target.value))}
                 />
             </InfoContainer>
+            <RemoveButton
+                onClick={handleRemove}
+                className="material-symbols-rounded"
+            >
+                close
+            </RemoveButton>
         </Container>
     );
 };
+
+const RemoveButton = styled.div`
+    width: 40px;
+    height: 40px;
+    margin-top: 20px;
+    color: #797a81;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+        color: #000000;
+    }
+`;
 
 const InfoLabel = styled.div`
     font-weight: 500;
@@ -109,7 +140,8 @@ const InfoContainer = styled.div`
     display: flex;
     flex-direction: column;
     margin-left: 20px;
-    width: 130px;
+    width: 110px;
+    height: 100%;
 `;
 
 const Input = styled.input`
@@ -137,7 +169,6 @@ const Container = styled.div`
     background: #ffffff;
     border: 1px solid #e6e6e6;
     border-radius: 8px;
-    margin-bottom: 20px;
 `;
 
 export default MenuItem;

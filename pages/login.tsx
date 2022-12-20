@@ -18,17 +18,23 @@ const Login = () => {
             setError("아이디와 비밀번호를 입력해주세요.");
         } else {
             axios
-                .post(`${process.env.NEXT_PUBLIC_API_URL}auth/login/admin`, {
-                    user_id: id,
-                    user_pw: password,
-                })
+                .post(
+                    `${process.env.NEXT_PUBLIC_API_URL}/auth/login/admin`,
+                    {
+                        user_id: id,
+                        user_pw: password,
+                    },
+                    {
+                        withCredentials: true,
+                    }
+                )
                 .then((res) => {
                     console.log(res);
                     if (res.status === 200) {
                         localStorage.setItem("refresh", res.data.refreshToken);
                         axios
                             .get(
-                                `${process.env.NEXT_PUBLIC_API_URL}auth/refresh`,
+                                `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
 
                                 {
                                     headers: {
@@ -79,7 +85,9 @@ const Login = () => {
                     }}
                 />
                 <Spacer size="32px" />
-                <LoginButton onClick={(e) => login(e)}>로그인</LoginButton>
+                <LoginButton type="button" onClick={(e) => login(e)}>
+                    로그인
+                </LoginButton>
             </LoginBox>
         </Container>
     );
