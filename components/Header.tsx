@@ -29,12 +29,24 @@ const Header = () => {
         }
     }, [data]);
 
+    const logout = () => {
+        alert("로그아웃 되었습니다.");
+        localStorage.removeItem("access");
+        router.replace("/login");
+    };
+
     return (
         <Container>
             <HeaderWrapper>
-                <Logo src="/images/admin.svg" />
+                <Logo
+                    style={{ cursor: "pointer" }}
+                    src="/images/admin.svg"
+                    onClick={() => router.replace("/")}
+                />
 
-                <span>{data} 님</span>
+                <span style={{ cursor: "pointer" }} onClick={logout}>
+                    {data} 님
+                </span>
             </HeaderWrapper>
         </Container>
     );

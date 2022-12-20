@@ -12,6 +12,13 @@ const Login = () => {
 
     const router = useRouter();
 
+    useEffect(() => {
+        document.title = "로그인";
+        if (localStorage.getItem("access") != null) {
+            router.replace("/");
+        }
+    }, []);
+
     const login = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         if (id === "" || password === "") {
@@ -80,7 +87,7 @@ const Login = () => {
                 <Spacer size="16px" />
                 <AuthInput
                     type="password"
-                    placeholder="아이디를 입력해주세요"
+                    placeholder="비밀번호를 입력해주세요"
                     value={password}
                     onChange={(e) => {
                         setPassword(e.target.value);

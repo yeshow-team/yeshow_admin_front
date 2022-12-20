@@ -105,7 +105,15 @@ const Home = () => {
                         ) : (
                             <ShopList>
                                 {myShop.map((shop: Shop, index: number) => (
-                                    <RestaurantCard key={index}>
+                                    <RestaurantCard
+                                        key={index}
+                                        onClick={() =>
+                                            router.push({
+                                                pathname: "/shop/[id]",
+                                                query: { id: shop.shop_uuid },
+                                            })
+                                        }
+                                    >
                                         <RestaurantContent>
                                             <RestaurantInfoContainer>
                                                 <Label>
@@ -150,7 +158,26 @@ const Home = () => {
                                                             사업자정보
                                                         </LabelTitle>
                                                         <Spacer size={"9px"} />
-                                                        <TextButton>
+                                                        <TextButton
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                var imageWin =
+                                                                    window.open(
+                                                                        "",
+                                                                        "",
+                                                                        "width=600px, height=600px"
+                                                                    );
+                                                                imageWin?.document.write(
+                                                                    "<html><body style='margin:0'>"
+                                                                );
+                                                                imageWin?.document.write(
+                                                                    `<img src="${shop.business_registration_image}" border=0>`
+                                                                );
+                                                                imageWin?.document.write(
+                                                                    "</body><html>"
+                                                                );
+                                                            }}
+                                                        >
                                                             사업자정보
                                                         </TextButton>
                                                     </Label>
