@@ -131,41 +131,52 @@ const AddShop = () => {
             }
         }
         if (step === 3) {
-            axios
-                .post(
-                    `${process.env.NEXT_PUBLIC_API_URL}/shop`,
-                    {
-                        shop: {
-                            shop_name: shopName,
-                            shop_category: shopCategory,
-                            shop_image: shopImage,
-                            business_registration_image:
-                                businessRegistrationImage,
-                            business_registration_certificate_image:
-                                businessRegistrationCertificateImage,
-                        },
+            menus.forEach((menu) => {
+                if (
+                    menu.shop_menu_name === "" ||
+                    menu.shop_menu_description === "" ||
+                    menu.shop_menu_price === 0 ||
+                    menu.shop_menu_image === null
+                ) {
+                    makeModal("오류", "메뉴를 모두 입력해주세요.");
+                } else {
+                    axios
+                        .post(
+                            `${process.env.NEXT_PUBLIC_API_URL}/shop`,
+                            {
+                                shop: {
+                                    shop_name: shopName,
+                                    shop_category: shopCategory,
+                                    shop_image: shopImage,
+                                    business_registration_image:
+                                        businessRegistrationImage,
+                                    business_registration_certificate_image:
+                                        businessRegistrationCertificateImage,
+                                },
 
-                        shop_detail: {
-                            shop_address: shopAddress,
-                            shop_tell: shopPhone,
-                            shop_business_hours: businessHours,
-                            shop_closed_days: closedDays,
-                            shop_description: shopDescription,
-                        },
-                        menus: menus,
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem(
-                                "access"
-                            )}`,
-                        },
-                    }
-                )
-                .then((res) => {
-                    makeModal("성공", "가게 등록이 완료되었습니다.");
-                    router.push("/");
-                });
+                                shop_detail: {
+                                    shop_address: shopAddress,
+                                    shop_tell: shopPhone,
+                                    shop_business_hours: businessHours,
+                                    shop_closed_days: closedDays,
+                                    shop_description: shopDescription,
+                                },
+                                menus: menus,
+                            },
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${localStorage.getItem(
+                                        "access"
+                                    )}`,
+                                },
+                            }
+                        )
+                        .then((res) => {
+                            makeModal("성공", "가게 등록이 완료되었습니다.");
+                            router.push("/");
+                        });
+                }
+            });
         }
     };
 

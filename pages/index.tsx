@@ -289,7 +289,7 @@ const Home = () => {
         </PageContainer>
     );
 };
-const timeForToday = (value) => {
+const timeForToday = (value: Date) => {
     const today = new Date();
     const timeValue = new Date(value);
 
@@ -616,7 +616,7 @@ const ReviewCard = styled.div`
     gap: 40px;
 `;
 
-const ReservationCard = styled.div`
+const ReservationCard = styled.table`
     width: 100%;
     height: 438px;
     background: #ffffff;
