@@ -196,6 +196,7 @@ const Shop = () => {
                         <Label4>가게 휴무일</Label4>
                         <Spacer size={"11px"} />
                         <MoreInfo>{shop.shop_detail.shop_closed_days}</MoreInfo>
+                        <Spacer size="200px" />
                     </Container>
                 </>
             )}
