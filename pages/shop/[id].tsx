@@ -342,7 +342,7 @@ const Menus = styled.div`
 const ShopAction = styled.div`
     display: flex;
     align-items: center;
-    position: relative;
+    position: absolute;
     right: calc((100vw - 1200px) / 2);
     top: 372px;
     gap: 18px;

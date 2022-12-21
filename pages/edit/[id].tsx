@@ -126,7 +126,6 @@ const Edit = () => {
                 shop.shop.business_registration_certificate_image
             );
             setShopImage(shop.shop.shop_image);
-
             setBusinessRegistrationImageName("business_registration_image.png");
             setBusinessRegistrationCertificateImageName(
                 "business_registration_certificate_image.png"

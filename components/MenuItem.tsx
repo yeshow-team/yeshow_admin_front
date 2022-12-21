@@ -1,7 +1,20 @@
 import styled from "@emotion/styled";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 const MenuItem = ({ ...props }) => {
+    const router = useRouter();
+    const { id } = router.query;
+
+    useEffect(() => {
+        if (localStorage.getItem("access") == null) {
+            router.replace("/login");
+        }
+        axios.defaults.headers.common[
+            "Authorization"
+        ] = `Bearer ${localStorage.getItem("access")}`;
+    }, []);
     const resize_image = (image: any) => {
         let canvas = document.createElement("canvas"),
             max_size = 1280,
@@ -36,6 +49,15 @@ const MenuItem = ({ ...props }) => {
             })
         );
     };
+
+    const deleteMenu = (id: string) => {
+        axios.delete(`/shop/menu`, {
+            data: {
+                menu_id: id,
+            },
+        });
+    };
+
     const setName = (name: string) => {
         const temp = props.menus.map((menu: any, index: number) => {
             if (index === props.id) {
@@ -69,6 +91,9 @@ const MenuItem = ({ ...props }) => {
         if (props.menus.length === 1) {
             alert("메뉴는 최소 1개 이상이어야 합니다.");
             return;
+        }
+        if (props.menu.menu_id) {
+            deleteMenu(props.menu.menu_id);
         }
         props.setMenus(
             props.menus.filter((menu: any, index: number) => index !== props.id)
