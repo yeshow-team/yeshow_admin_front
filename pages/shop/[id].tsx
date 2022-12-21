@@ -263,7 +263,7 @@ const Modal = styled.div`
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    height:auto
+    height: auto;
     animation: ${fadeIn} 0.3s ease-in-out;
 `;
 

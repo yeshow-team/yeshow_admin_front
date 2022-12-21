@@ -217,10 +217,10 @@ const AddShop = () => {
                 {step === 1 ? (
                     <Form>
                         <InputText
-                            placeholder={"가게 이름 (2~10자)"}
+                            placeholder={"가게 이름 (2~14자)"}
                             label={"가게 이름"}
                             required={true}
-                            regexString={/^[가-힣a-zA-Z0-9]{2,10}$/}
+                            regexString={/^[가-힣a-zA-Z0-9]{2,14}$/}
                             value={shopName}
                             setValue={setShopName}
                             error={shopNameError}
