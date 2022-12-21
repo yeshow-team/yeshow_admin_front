@@ -4,10 +4,10 @@ import { keyframes } from "@emotion/react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
-import InputButton from "../../../components/InputButton";
-import InputFile from "../../../components/InputFile";
-import InputText from "../../../components/InputText";
-import MenuItem from "../../../components/MenuItem";
+import InputButton from "../../components/InputButton";
+import InputFile from "../../components/InputFile";
+import InputText from "../../components/InputText";
+import MenuItem from "../../components/MenuItem";
 
 const Edit = () => {
     const router = useRouter();

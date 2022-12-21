@@ -82,7 +82,10 @@ const Shop = () => {
     };
 
     const edit = () => {
-        router.push(`/shop/edit/${id}`);
+        router.push({
+            pathname: "/edit/[id]",
+            query: { id: id },
+        });
     };
 
     return (
