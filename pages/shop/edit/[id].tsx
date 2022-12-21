@@ -83,11 +83,11 @@ const Edit = () => {
     ] = React.useState(null);
 
     const [businessRegistrationImageName, setBusinessRegistrationImageName] =
-        React.useState(null);
+        React.useState<string | null>(null);
     const [
         businessRegistrationCertificateImageName,
         setBusinessRegistrationCertificateImageName,
-    ] = React.useState(null);
+    ] = React.useState<string | null>(null);
 
     const handleModalClose = () => {
         setModalVisible(false);
