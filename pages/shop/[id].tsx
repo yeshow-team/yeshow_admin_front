@@ -307,12 +307,6 @@ const Label4 = styled.div`
     font-weight: 500;
     font-size: 25px;
     line-height: 44px;
-    /* identical to box height, or 176% */
-
-    display: flex;
-    align-items: center;
-    letter-spacing: -0.41px;
-
     color: #38393e;
 `;
 
@@ -340,7 +334,7 @@ const Menus = styled.div`
 const ShopAction = styled.div`
     display: flex;
     align-items: center;
-    position: absolute;
+    position: relative;
     right: calc((100vw - 1200px) / 2);
     top: 372px;
     gap: 18px;

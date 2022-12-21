@@ -108,7 +108,7 @@ const MenuItem = ({ ...props }) => {
                         image.onload = (e) => {
                             if (e.target) {
                                 const dataUrl = resize_image(e.target);
-                                props.setFile(dataUrl);
+                                setFile(dataUrl);
                             }
                         };
                     };
