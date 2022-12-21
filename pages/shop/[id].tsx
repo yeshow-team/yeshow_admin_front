@@ -81,6 +81,10 @@ const Shop = () => {
         makeModal("삭제", "정말로 삭제하시겠습니까?");
     };
 
+    const edit = () => {
+        router.push(`/shop/edit/${id}`);
+    };
+
     return (
         <PageContainer>
             <Header />
@@ -143,7 +147,7 @@ const Shop = () => {
                 <>
                     <Top src={shop.shop.shop_image} />
                     <ShopAction>
-                        <EditButton>수정</EditButton>
+                        <EditButton onClick={edit}>수정</EditButton>
                         <RemoveButton onClick={handleDelete}>삭제</RemoveButton>
                     </ShopAction>
                     <Container>

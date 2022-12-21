@@ -1,14 +1,41 @@
 import React, { useEffect } from "react";
 import styled from "@emotion/styled";
-import InputButton from "../components/InputButton";
-import InputText from "../components/InputText";
-import InputFile from "../components/InputFile";
 import { keyframes } from "@emotion/react";
-import MenuItem from "../components/MenuItem";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useQuery } from "@tanstack/react-query";
+import InputButton from "../../../components/InputButton";
+import InputFile from "../../../components/InputFile";
+import InputText from "../../../components/InputText";
+import MenuItem from "../../../components/MenuItem";
 
-const AddShop = () => {
+const Edit = () => {
+    const router = useRouter();
+    const { id } = router.query;
+
+    useEffect(() => {
+        document.title = "가게 추가 - Yeshow Admin";
+        if (localStorage.getItem("access") == null) {
+            router.replace("/login");
+        }
+        axios.defaults.headers.common[
+            "Authorization"
+        ] = `Bearer ${localStorage.getItem("access")}`;
+    }, []);
+
+    const fetchShop = async () => {
+        const { data } = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/shop/${id}`
+        );
+        return data;
+    };
+
+    const {
+        data: shop,
+        error: shopError,
+        isLoading: isFetchingShop,
+    } = useQuery(["shop"], fetchShop);
+
     const [step, setStep] = React.useState(1);
     const [shopName, setShopName] = React.useState("");
     const [shopNameError, setShopNameError] = React.useState(false);
@@ -74,18 +101,6 @@ const AddShop = () => {
         setModalMessage(message);
     };
 
-    useEffect(() => {
-        document.title = "가게 추가 - Yeshow Admin";
-        if (localStorage.getItem("access") == null) {
-            router.replace("/login");
-        }
-        axios.defaults.headers.common[
-            "Authorization"
-        ] = `Bearer ${localStorage.getItem("access")}`;
-    }, []);
-
-    const router = useRouter();
-
     const [menus, setMenus] = React.useState([
         {
             shop_menu_name: "메뉴 이름",
@@ -96,6 +111,29 @@ const AddShop = () => {
         },
     ]);
 
+    useEffect(() => {
+        if (shop) {
+            setShopName(shop.shop.shop_name);
+            setShopCategory(shop.shop.shop_category);
+            setShopAddress(shop.shop_detail.shop_address);
+            setShopPhone(shop.shop_detail.shop_tell);
+            setBusinessHours(shop.shop_detail.shop_business_hours);
+            setClosedDays(shop.shop_detail.shop_closed_days);
+            setShopDescription(shop.shop_detail.shop_description);
+            setMenus(shop.menu);
+            setBusinessRegistrationImage(shop.shop.business_registration_image);
+            setBusinessRegistrationCertificateImage(
+                shop.shop.business_registration_certificate_image
+            );
+            setShopImage(shop.shop.shop_image);
+
+            setBusinessRegistrationImageName("business_registration_image.png");
+            setBusinessRegistrationCertificateImageName(
+                "business_registration_certificate_image.png"
+            );
+            setShopImageName("shop_image.png");
+        }
+    }, [shop]);
     const handleClick = () => {
         if (step === 1) {
             if (
@@ -141,10 +179,11 @@ const AddShop = () => {
                     makeModal("오류", "메뉴를 모두 입력해주세요.");
                 } else {
                     axios
-                        .post(
+                        .patch(
                             `${process.env.NEXT_PUBLIC_API_URL}/shop`,
                             {
                                 shop: {
+                                    shop_uuid: router.query.id,
                                     shop_name: shopName,
                                     shop_category: shopCategory,
                                     shop_image: shopImage,
@@ -172,7 +211,7 @@ const AddShop = () => {
                             }
                         )
                         .then((res) => {
-                            makeModal("성공", "가게 등록이 완료되었습니다.");
+                            makeModal("성공", "가게 수정이 완료되었습니다.");
                             router.push("/");
                         });
                 }
@@ -204,13 +243,13 @@ const AddShop = () => {
                 </ModalBackground>
             )}
             <Container>
-                <BackButton onClick={() => router.push("/")}>
+                <BackButton onClick={() => router.back()}>
                     <IcoButton className="material-symbols-rounded">
                         arrow_back_ios
                     </IcoButton>
                     돌아가기
                 </BackButton>
-                <StepTitle>가게 추가 ({step}/3)</StepTitle>
+                <StepTitle>가게 수정 ({step}/3)</StepTitle>
                 <Spacer size={"20px"} />
                 <StepDescription>{stepMessage[step - 1]}</StepDescription>
                 <Spacer size={"67px"} />
@@ -220,9 +259,7 @@ const AddShop = () => {
                             placeholder={"가게 이름 (2~14자)"}
                             label={"가게 이름"}
                             required={true}
-                            regexString={
-                                /^[가-힣a-zA-Z0-9\s`~!@#$%^&*|\\\'\";:\/?]{2,14}$/
-                            }
+                            regexString={/^[가-힣a-zA-Z0-9]{2,14}$/}
                             value={shopName}
                             setValue={setShopName}
                             error={shopNameError}
@@ -638,4 +675,4 @@ const Spacer = (props: any) => {
     return <div style={{ height: `${props.size}` }} />;
 };
 
-export default AddShop;
+export default Edit;
