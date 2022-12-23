@@ -95,7 +95,7 @@ const Home = () => {
             <Container>
                 <SpaceBetween>
                     <Section size={"690px"}>
-                        <SectionTitle>내 가게 목록</SectionTitle>
+                        <SectionTitle>내 운영중인 가게 목록</SectionTitle>
                         <Spacer size={"22px"} />
                         <SectionDescription>
                             현재 yeshow에서 운영중인 가게 목록을 보여줍니다.
